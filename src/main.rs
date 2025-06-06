@@ -1,6 +1,6 @@
 use std::io;
 
-use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind };
+use crossterm::{event::{self, Event, KeyCode, KeyEvent, KeyEventKind }, terminal};
 use ratatui::{
     buffer::Buffer,
     layout::Rect,
@@ -12,5 +12,29 @@ use ratatui::{
 
 };
 fn main() {
-    println!("Hello, world!");
+    let terminal = ratatui::init();
+    let result = run(terminal);
+
+    ratatui::restore();
+
+}
+
+fn run(mut terminal: DefaultTerminal) -> io::Result<()> {
+    loop {
+        terminal.draw(render)?;
+
+        if let Event::Key(key) = event::read()? {
+            match key.code {
+                event::KeyCode::Esc => {
+                    break;
+                },
+                _ => {}
+            }
+        }
+    }
+    Ok(())
+}
+
+fn render(frame: &mut Frame) {
+    Paragraph::new("Hello").render(frame.area(), frame.buffer_mut());
 }
