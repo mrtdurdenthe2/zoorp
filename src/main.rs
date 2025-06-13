@@ -3,13 +3,13 @@ use std::io;
 use crossterm::{event::{self, Event, KeyCode, KeyEvent, KeyEventKind }, terminal};
 use ratatui::{
     buffer::Buffer,
-    layout::Rect,
+    layout::{self, Layout, Rect},
     style::Stylize,
     symbols::border,
     text::{Line, Text},
     widgets::{Block, Paragraph, Widget},
     DefaultTerminal, Frame,
-
+    prelude::*,
 };
 
 #[derive(Default)]
@@ -19,6 +19,16 @@ struct App {
 struct MyHeaderWidget {
 
 }
+pub fn ui(frame: &mut Frame, app: &App) {
+    let layout = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(vec![
+            Constraint::Percentage(50),
+            Constraint::Percentage(50),
+        ])
+        .split(frame.area());
+}
+
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
     let app_result = App::default().run(&mut terminal);
@@ -26,6 +36,7 @@ fn main() -> io::Result<()> {
 
     app_result
 }
+
 impl App {
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
         while !self.should_quit {
@@ -63,6 +74,7 @@ impl App {
 
 }
 impl Widget for &App {
+    
     fn render(self, area: Rect, buf: &mut Buffer) {
         // ...
         Paragraph::new("Header text").render(Rect::new(0, 0, area.width, 1), buf);
