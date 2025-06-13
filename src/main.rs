@@ -7,10 +7,11 @@ use ratatui::{
     style::Stylize,
     symbols::border,
     text::{Line, Text},
-    widgets::{Block, Paragraph, Widget},
+    widgets::{Block, Paragraph, Widget, Borders},
     DefaultTerminal, Frame,
     prelude::*,
 };
+
 
 #[derive(Default)]
 struct App {
@@ -19,16 +20,20 @@ struct App {
 struct MyHeaderWidget {
 
 }
-pub fn ui(frame: &mut Frame, app: &App) {
-    let layout = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints(vec![
-            Constraint::Percentage(50),
-            Constraint::Percentage(50),
-        ])
-        .split(frame.area());
-}
 
+fn ui (frame: &mut Frame, _app: &App) { // used in impl App::Run, which is used by main
+    let chunks = Layout::default()
+    .direction(Direction::Horizontal)
+    .constraints(vec![
+        Constraint::Percentage(50),
+        Constraint::Percentage(50)
+    ])
+    .split(frame.area());
+    let leftPane = Block::default().title_top("LEFT PANE").borders(Borders::ALL);
+    let rightPane = Block::default().title_top("RIGHT PANE").borders(Borders::ALL);
+    frame.render_widget(leftPane, chunks[0]);
+    frame.render_widget(rightPane, chunks[1]);
+    }
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
     let app_result = App::default().run(&mut terminal);
@@ -46,7 +51,7 @@ impl App {
         Ok(())
     }
     fn draw(&self, frame: &mut Frame) {
-        frame.render_widget(self, frame.area());
+        ui(frame, self);
     }
 
     fn handle_events(&mut self) -> io::Result<()> {
