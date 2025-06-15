@@ -14,7 +14,7 @@ use ratatui::{
 
 
 #[derive(Default)]
-struct App {
+struct App { // Keep the "data" for the app in here 
     should_quit: bool
 }
 struct MyHeaderWidget {
@@ -24,15 +24,17 @@ struct MyHeaderWidget {
 fn ui (frame: &mut Frame, _app: &App) { // used in impl App::Run, which is used by main
     let chunks = Layout::default()
     .direction(Direction::Horizontal)
-    .constraints(vec![
+    .constraints(&vec![ 
         Constraint::Percentage(50),
         Constraint::Percentage(50)
     ])
     .split(frame.area());
-    let leftPane = Block::default().title_top("LEFT PANE").borders(Borders::ALL);
-    let rightPane = Block::default().title_top("RIGHT PANE").borders(Borders::ALL);
-    frame.render_widget(leftPane, chunks[0]);
-    frame.render_widget(rightPane, chunks[1]);
+
+
+    let left_pane = Block::default().title_top("LEFT PANE").borders(Borders::ALL);
+    let right_pane = Block::default().title_top("RIGHT PANE").borders(Borders::ALL);
+    frame.render_widget(left_pane, chunks[0]);
+    frame.render_widget(right_pane, chunks[1]);
     }
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
