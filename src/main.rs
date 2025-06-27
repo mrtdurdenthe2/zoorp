@@ -65,16 +65,19 @@ fn ui(frame: &mut Frame, _app: &App) {
     let mut data_return = Text::raw(String::from("{}"));
 }
 fn main() -> io::Result<()> {
-    let mut terminal = ratatui::init();
-    let app_result = App::default().run(&mut terminal);
-    ratatui::restore();
-    app_result
+    // let mut terminal = ratatui::init();
+    // let app_result = App::default().run(&mut terminal);
+    // ratatui::restore();
+    // app_result
+    let apiresult = App::set_chart_data();
+    println!("{:?}", apiresult);
+    Ok(())
 }
 
 impl App {
-    fn set_chart_data(&mut self) -> Result<(), reqwest::Error> {
+    pub fn set_chart_data() -> Result<String> {
         let newdata = collecter::daily_data("TIME_SERIES_DAILY", "TSLA")?;
-        Ok(())
+        Ok(newdata)
     }
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
         while !self.should_quit {
@@ -99,15 +102,15 @@ impl App {
         Ok(())
     }
 
-    fn handle_key_event(&mut self, key_event: KeyEvent) -> Result<(), reqwest::Error> {
+    fn handle_key_event(&mut self, key_event: KeyEvent) -> Result<()> {
         match key_event.code {
             KeyCode::Esc => {
                 self.exit();
                 Ok(())
             }
 
-            KeyCode::Char(d) => {
-                self.set_chart_data();
+            KeyCode::Char(_) => {
+                App::set_chart_data();
                 Ok(())
             }
             _ => Ok(()),

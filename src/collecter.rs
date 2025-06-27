@@ -20,12 +20,11 @@ pub struct OHLCpacket {
     volume: u64,
 }
 
-pub fn daily_data(ts: &str, symbol: &str) -> Result<(), Error> {
+pub fn daily_data(ts: &str, symbol: &str) -> Result<String, Error> {
     let key: String = env::var("ZOORPKEY").expect("No API key set");
     let vantage_url =
         format!("https://www.alphavantage.co/query?function={ts}&symbol={symbol}&apikey={key}");
     let response = reqwest::blocking::get(vantage_url)?.text()?;
 
-    response;
-    Ok(())
+    Ok(response)
 }
