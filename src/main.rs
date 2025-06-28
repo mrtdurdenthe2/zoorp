@@ -17,6 +17,12 @@ use ratatui::{
 };
 use reqwest::Result;
 
+use serde::{Deserialize, Serialize};
+use serde_json::{Result as sjsonResult, Value as sjsonValue};
+
+use std::error::Error as stdError;
+type DynError = Box<dyn stdError + Sync + Send + 'static>;
+
 mod collecter;
 
 #[derive(Default)]
@@ -75,7 +81,7 @@ fn main() -> io::Result<()> {
 }
 
 impl App {
-    pub fn set_chart_data() -> Result<String> {
+    pub fn set_chart_data() -> std::result::Result<String, DynError> {
         let newdata = collecter::daily_data("TIME_SERIES_DAILY", "TSLA")?;
         Ok(newdata)
     }
