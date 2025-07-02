@@ -36,7 +36,7 @@ pub struct Ohlc {
     volume: String,
 }
 
-pub fn daily_data(ts: &str, symbol: &str) -> Result<String, DynError> {
+pub fn daily_data(ts: &str, symbol: &str) -> Result<Vec<(String, f64)>, DynError> {
     let key: String = env::var("ZOORPKEY")
         .expect("No API key found. Set the key in your OS's environment variables : ");
 
@@ -48,10 +48,17 @@ pub fn daily_data(ts: &str, symbol: &str) -> Result<String, DynError> {
         .text()?;
 
     let v: ApiResponse = serde_json::from_str(&response)?; // Parse to a serde json
-    let (_, latestday) = v
+    let data_list = v
         .daily
-        .iter()
-        .next_back()
-        .ok_or_else(|| -> Box<dyn stdError + Send + Sync> { "no daily data : ".into() })?;
-    Ok(format!("{:?}", latestday.open))
+        .into_iter()
+        .map(|(day, ohlc)| {
+            let price = ohlc
+                .open
+                .trim()
+                .parse::<f64>()
+                .map_err(|e| -> DynError { Box::new(e) })?;
+            Ok((day, price))
+        })
+        .collect::<Result<Vec<_>, DynError>>()?;
+    Ok(data_list)
 }

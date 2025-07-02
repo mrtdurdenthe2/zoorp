@@ -75,13 +75,13 @@ fn main() -> io::Result<()> {
     // let app_result = App::default().run(&mut terminal);
     // ratatui::restore();
     // app_result
-    let apiresult = App::set_chart_data();
-    println!("{:?}", apiresult);
+    let apiresult = App::set_chart_data().unwrap();
+    println!("{:#?}", apiresult);
     Ok(())
 }
 
 impl App {
-    pub fn set_chart_data() -> std::result::Result<String, DynError> {
+    pub fn set_chart_data() -> std::result::Result<Vec<(String, f64)>, DynError> {
         let newdata = collecter::daily_data("TIME_SERIES_DAILY", "TSLA")?;
         Ok(newdata)
     }
